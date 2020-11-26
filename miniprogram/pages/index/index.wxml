@@ -1,59 +1,40 @@
 <!--index.wxml-->
-<view class="container">
-
-  <!-- 用户 openid -->
-  <view class="userinfo">
-    <button 
-      open-type="getUserInfo" 
-      bindgetuserinfo="onGetUserInfo"
-      class="userinfo-avatar"
-      style="background-image: url({{avatarUrl}})"
-      size="default"
-    ></button>
-    <view class="userinfo-nickname-wrapper">
-      <button class="userinfo-nickname" bindtap="onGetOpenid">点击获取 openid</button>
+<view class="container" style="margin-top:20px">
+  <view style="position:fixed;padding-bottom:20px">
+    <view class="search-bar-top i-cell i-input">
+      <view class="silver-text i-cell-hd i-input-title" space="{{true}}" decode="{{true}}">收件人姓名</view>
+      <input style="text-align:right" bind:confirm="search" model:value="{{ searchName }}" class="i-content-class i-input-input i-cell-bd"/>
+    </view>
+    <view class="search-bar-bottom i-cell i-input">
+      <view class="silver-text i-cell-hd i-input-title">身份证号后4位</view>
+      <input style="text-align:right" bind:confirm="search" model:value="{{ searchIdLast4 }}" class="i-content-class i-input-input i-cell-bd"/>
     </view>
   </view>
 
+  <view style = "margin-top:95px">
+    <image src="../../images/loading.gif" hidden="{{ !searchLoading }}" mode="widthFix" style="z-index:100;width: 50px;position:fixed;left:20px;bottom:20px"></image>
+  
+  <view hidden="{{ !show404 }}" class="container">
+    <image mode="widthFix" style="width:80vw;margin-top:60px" src="../../images/404.png"/>
+    <image mode="widthFix" style="width:60vw;margin-top:50px" src="../../images/1606183143_996984.png" />
+  </view>
 
-  <!-- 上传图片 -->
-  <view class="uploader">
-    <view class="uploader-text" bindtap="doUpload">
-      <text>上传图片</text>
+  <view wx:for="{{ list }}" wx:if="infoShow" wx:key="id">
+    <view animation="{{animationInfoData[index]}}" hidden="{{!infoShow[index]}}" style="margin-top:20px;width:95vw;border-radius:20px" bindtap="openDetail">
+      <i-card extra="查看详情 >">
+        <view slot="status" style="color:#F39C12">
+          {{ item.status }}
+          <i-icon type="publishgoods_fill" size="20" color="#F39C12" />
+        </view>
+        <view style="font-size:18px" slot="content">{{ item.item }}</view>
+        <view slot="footer" style="text-align: center">
+          <image mode="widthFix" style="width:80vw" lazy-load="true" src="../../images/items/item1.png"></image>
+        </view>
+      </i-card>
     </view>
-    <view class="uploader-container" wx:if="{{imgUrl}}">
-      <image class="uploader-image" src="{{imgUrl}}" mode="aspectFit" bindtap="previewImg"></image>
-    </view>
+  </view>
   </view>
 
-
-  <!-- 操作数据库 -->
-  <view class="uploader">
-    <navigator url="../databaseGuide/databaseGuide" open-type="navigate" class="uploader-text">
-      <text>前端操作数据库</text>
-    </navigator>
-  </view>
-
-  <!-- 即时通信 -->
-  <view class="uploader">
-    <navigator url="../im/im" open-type="navigate" class="uploader-text">
-      <text>即时通信 Demo</text>
-    </navigator>
-  </view>
-
-  <!-- 新建云函数 -->
-  <view class="uploader">
-    <navigator url="../addFunction/addFunction" open-type="navigate" class="uploader-text">
-      <text>快速新建云函数</text>
-    </navigator>
-  </view>
-
-  <!-- 云调用 -->
-  <view class="uploader">
-    <navigator url="../openapi/openapi" open-type="navigate" class="uploader-text">
-      <text>云调用</text>
-    </navigator>
-  </view>
-
+  <!-- <image src="../../images/loading.gif" hidden="{{ !loading }}" mode="aspectFit" style="width: 50px;margin-top:20px"></image> -->
 
 </view>

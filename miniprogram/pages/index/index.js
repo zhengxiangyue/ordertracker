@@ -1,120 +1,145 @@
 //index.js
 const app = getApp()
+const db = wx.cloud.database()
 
 Page({
   data: {
+    loading: false,
+    searchLoading: false,
+    searchName: "",
+    searchIdLast4: "",
+    list: [],
+
+    fadeInAnimation: null,
+
     avatarUrl: './user-unlogin.png',
     userInfo: {},
     logged: false,
     takeSession: false,
-    requestResult: ''
+    requestResult: '',
+    spinShow: true,
+    switch: false
   },
 
-  onLoad: function() {
-    if (!wx.cloud) {
-      wx.redirectTo({
-        url: '../chooseLib/chooseLib',
-      })
-      return
+  search: function() {
+    let that = this;
+    console.log(that.data)
+
+    if (that.data.searchName == "") {
+      wx.showToast({
+        title: '请输入收件人姓名',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
     }
 
-    // 获取用户信息
-    wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-          wx.getUserInfo({
-            success: res => {
-              this.setData({
-                avatarUrl: res.userInfo.avatarUrl,
-                userInfo: res.userInfo
-              })
-            }
-          })
+    if (that.data.idLast4 == "") {
+      wx.showToast({
+        title: '请输入身份证号后四位',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+    
+    that.setData({
+      searchLoading: true,
+      show404: false,
+      list: [],
+    })
+
+    db.collection('orders').where({
+        receiver: that.data.searchName,
+        idLast4: that.data.searchIdLast4,
+    }).get({
+      success: function(res) {
+        if(res.data.length != 0) {
+          that.setData({list: res.data})
+          that.fadeInInfo();
+        } else {
+          that.setData({show404: true})        
         }
-      }
+     },
+     fail: function(res) {
+       console.log("failed");
+     },
+     complete: function(res) {
+       console.log("done")
+       that.setData({searchLoading: false})
+     },
     })
   },
 
-  onGetUserInfo: function(e) {
-    if (!this.data.logged && e.detail.userInfo) {
-      this.setData({
-        logged: true,
-        avatarUrl: e.detail.userInfo.avatarUrl,
-        userInfo: e.detail.userInfo
+  fadeInInfo: function(callback = function() {}) {
+    let that = this
+
+    let info = this.data.list
+    var key
+
+    var animationInfoData = []
+    var infoShow = []
+    for (key in info) {
+      var animation = wx.createAnimation({
+        duration: 0,
+        timingFunction: 'step-start',
       })
+      animation.opacity(0).scale(0.8, 0.8).step()
+      animationInfoData[key] = animation.export()
+      infoShow[key] = true
     }
-  },
 
-  onGetOpenid: function() {
-    // 调用云函数
-    wx.cloud.callFunction({
-      name: 'login',
-      data: {},
-      success: res => {
-        console.log('[云函数] [login] user openid: ', res.result.openid)
-        app.globalData.openid = res.result.openid
-        wx.navigateTo({
-          url: '../userConsole/userConsole',
+    that.setData({
+      animationInfoData: animationInfoData
+    }, function() {
+      that.setData({
+        infoShow: infoShow
+      })
+
+      for (key in info) {
+        var time = 100 * key
+        var animation = wx.createAnimation({
+          duration: 500,
+          timingFunction: 'ease',
+          delay: time
         })
-      },
-      fail: err => {
-        console.error('[云函数] [login] 调用失败', err)
-        wx.navigateTo({
-          url: '../deployFunctions/deployFunctions',
-        })
+        animation.opacity(1).scale(1, 1).step()
+        animationInfoData[key] = animation.export()
       }
+      setTimeout(function() {
+        that.setData({
+          animationInfoData: animationInfoData
+        })
+      }, 100)
     })
   },
 
-  // 上传图片
-  doUpload: function () {
-    // 选择图片
-    wx.chooseImage({
-      count: 1,
-      sizeType: ['compressed'],
-      sourceType: ['album', 'camera'],
-      success: function (res) {
-
-        wx.showLoading({
-          title: '上传中',
-        })
-
-        const filePath = res.tempFilePaths[0]
-        
-        // 上传图片
-        const cloudPath = 'my-image' + filePath.match(/\.[^.]+?$/)[0]
-        wx.cloud.uploadFile({
-          cloudPath,
-          filePath,
-          success: res => {
-            console.log('[上传文件] 成功：', res)
-
-            app.globalData.fileID = res.fileID
-            app.globalData.cloudPath = cloudPath
-            app.globalData.imagePath = filePath
-            
-            wx.navigateTo({
-              url: '../storageConsole/storageConsole'
-            })
-          },
-          fail: e => {
-            console.error('[上传文件] 失败：', e)
-            wx.showToast({
-              icon: 'none',
-              title: '上传失败',
-            })
-          },
-          complete: () => {
-            wx.hideLoading()
-          }
-        })
-
+  openDetail: function() {
+    console.log("open detail clicked");
+    this.setData({ loading: true })
+    wx.navigateTo({
+      url: "/pages/detail/detail",
+      success: function() {
+        console.log("success");
       },
-      fail: e => {
-        console.error(e)
+      complete: function() {
+        console.log("complete");
       }
     })
+  },
+ 
+  onLoad: function() {
+   
+  },
+
+  onHide: function() {
+    console.log("index hide")
+    this.setData({ loading: false })
+  },
+
+  onShow: function() {
+    console.log(wx.getSystemInfoSync().SDKVersion);
+    console.log("index show")
   },
 
 })

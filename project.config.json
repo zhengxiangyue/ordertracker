@@ -11,7 +11,7 @@
 	},
 	"appid": "wx02c7d81b7bcc8a55",
 	"projectname": "OrderTracker",
-	"libVersion": "2.8.1",
+	"libVersion": "2.9.4",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
 	"condition": {

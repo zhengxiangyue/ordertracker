@@ -1,0 +1,75 @@
+<!--miniprogram/pages/detail.wxml-->
+<!-- <text>miniprogram/pages/detail.wxml</text> -->
+
+<view class="container" style="margin-top:20px">
+  <i-steps style="width:90vw;padding-bottom:10px;border-bottom: 1px solid #eeeeee">
+    <i-step status="finish" icon="barrage">
+        <view slot="title">
+          正在采购
+        </view>
+    </i-step>
+    <i-step status="process" icon="brush">
+        <view slot="title">
+          寄送中
+        </view>
+    </i-step>
+    <i-step  icon="collection">
+        <view slot="title">
+          运输中
+        </view>
+    </i-step>
+        <i-step  icon="collection">
+        <view slot="title">
+          已完成
+        </view>
+    </i-step>
+  </i-steps>
+  <p style="margin:10px 10vw;width:80vw;font-size:20px;font-color:lightgray">Tabby Shoulder Bag 26 dja clkdsjf adiajdklajdfa dfjakd cladmk</p>
+  <view class="container">
+    <image mode="widthFix" style="width:80vw" src="https://img1.cohimg.net/is/image/Coach/73995_lhtau_a0?fmt=jpg&wid=680&hei=885&bgc=f0f0f0&fit=vfit&qlt=75"/>
+  </view>
+
+  <view class="container" style="padding-bottom:10px;margin-top:20px;width:80vw;border-bottom: 1px solid #eeeeee">
+  <i-row style="width:100%">
+    <i-col span="8" i-class="col-class">
+      收件人
+    </i-col>
+    <i-col span="16" i-class="col-class">
+      {{ receiver }}
+    </i-col>
+  </i-row>
+  <i-row style="width:100%;margin-top:10px">
+    <i-col span="8" i-class="col-class">
+      寄送至
+    </i-col>
+    <i-col span="16" i-class="col-class">
+      陕西省 西安市
+    </i-col>
+  </i-row>
+  <i-row style="width:100%;margin-top:10px">
+    <i-col span="8" i-class="col-class">
+      物流公司
+    </i-col>
+    <i-col span="16" i-class="col-class">
+      <view>{{ carrier }}</view>
+    </i-col>
+  </i-row>
+  <i-row style="width:100%;margin-top:10px">
+    <i-col span="8" i-class="col-class">
+      物流单号
+    </i-col>
+    <i-col span="16" i-class="col-class">
+      <view>{{ orderNumber }}</view>
+    </i-col>
+  </i-row>
+</view>
+
+  <view style="margin-top:20px;width:90vw;margin-bottom:20px">
+    <i-row style="width:100%;margin-top:10px">
+      <i-col span="24">
+        <button bindtap="copyOrderNumber" style="border-radius:8px;width:80%;padding:8px 0;margin-bottom:20px" type="default" plain="true" >查看物流链接</button>
+      </i-col>
+    </i-row>    
+  </view>
+
+</view>
